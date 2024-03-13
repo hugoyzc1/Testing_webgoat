@@ -72,7 +72,46 @@ public class JWTRefreshEndpointTest extends LessonTest {
     // Now create a new refresh token for Tom based on Toms old access token and send the refresh
     // token of Jerry
     String accessTokenTom =
-        "eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1MjYxMzE0MTEsImV4cCI6MTUyNjIxNzgxMSwiYWRtaW4iOiJmYWxzZSIsInVzZXIiOiJUb20ifQ.DCoaq9zQkyDH25EcVWKcdbyVfUL4c9D4jRvsqOqvi9iAd4QuqmKcchfbU8FNzeBNF9tLeFXHZLU4yRkq-bjm7Q";
+        "import com.google.cloud.secretmanager.v1.Secret;\n" +
+                "import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;\n" +
+                "import com.google.cloud.secretmanager.v1.SecretName;\n" +
+                "import java.io.IOException;\n" +
+                "\n" +
+                "public class GetSecret {\n" +
+                "\n" +
+                "  public static void getSecret() throws IOException {\n" +
+                "    // TODO(developer): Replace these variables before running the sample.\n" +
+                "    String projectId = \"your-project-id\";\n" +
+                "    String secretId = \"your-secret-id\";\n" +
+                "    getSecret(projectId, secretId);\n" +
+                "  }\n" +
+                "\n" +
+                "  // Get an existing secret.\n" +
+                "  public static void getSecret(String projectId, String secretId) throws IOException {\n" +
+                "    // Initialize client that will be used to send requests. This client only needs to be created\n" +
+                "    // once, and can be reused for multiple requests. After completing all of your requests, call\n" +
+                "    // the \"close\" method on the client to safely clean up any remaining background resources.\n" +
+                "    try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {\n" +
+                "      // Build the name.\n" +
+                "      SecretName secretName = SecretName.of(projectId, secretId);\n" +
+                "\n" +
+                "      // Create the secret.\n" +
+                "      Secret secret = client.getSecret(secretName);\n" +
+                "\n" +
+                "      // Get the replication policy.\n" +
+                "      String replication = \"\";\n" +
+                "      if (secret.getReplication().getAutomatic() != null) {\n" +
+                "        replication = \"AUTOMATIC\";\n" +
+                "      } else if (secret.getReplication().getUserManaged() != null) {\n" +
+                "        replication = \"MANAGED\";\n" +
+                "      } else {\n" +
+                "        throw new IllegalStateException(\"Unknown replication type\");\n" +
+                "      }\n" +
+                "\n" +
+                "      System.out.printf(\"Secret %s, replication %s\\n\", secret.getName(), replication);\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
     Map<String, Object> refreshJson = new HashMap<>();
     refreshJson.put("refresh_token", refreshToken);
     result =
